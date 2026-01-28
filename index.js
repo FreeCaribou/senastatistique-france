@@ -4,10 +4,6 @@ const server = createServer(async (req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
 
     if (req.url === '/') {
-        // Throw error if not accessible
-        const actualSenatorCall = await fetch('https://www.senat.fr/api-senat/senateurs.json');
-        const actualSenators = await actualSenatorCall.json();
-
         /**
          * Object actual senator:
          * matricule -> like an id
@@ -21,6 +17,16 @@ const server = createServer(async (req, res) => {
          * categorieProfessionnelle -> job category
          * organismes -> {code/type/libelle/ordre}[] the work group in the senat where she/he is
          */
+        const actualSenatorCall = await fetch('https://www.senat.fr/api-senat/senateurs.json');
+        const actualSenators = await actualSenatorCall.json();
+
+        /**
+         * Object all senator:
+         * Matricule -> the id
+         * Date_naissance -> date like "yyyy/mm/dd 00:00:00"
+         */
+        const allSenatorCall = await fetch('https://data.senat.fr/data/senateurs/ODSEN_GENERAL.json');
+        const allSenators = (await allSenatorCall.json()).results;
 
         // console.log('the senator', actualSenators);
 
@@ -31,7 +37,32 @@ const server = createServer(async (req, res) => {
         // label / code / count
         const groupes = [];
 
+        let oldestSenator;
+        let youngestSenator;
+
         actualSenators.forEach(senator => {
+            const senatorOtherDetail = allSenators.find(x => x.Matricule === senator.matricule);
+            const birthDate = new Date(senatorOtherDetail.Date_naissance);
+            const now = new Date();
+            let age = now.getFullYear() - birthDate.getFullYear();
+            const monthNow = now.getMonth();
+            const monthBirth = birthDate.getMonth();
+            if (monthNow < monthBirth || (monthNow === monthBirth && now.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            senator.birthDate = birthDate;
+            senator.age = age;
+            if (!oldestSenator) {
+                oldestSenator = senator;
+            } else if (oldestSenator.birthDate > birthDate) {
+                oldestSenator = senator;
+            }
+            if (!youngestSenator) {
+                youngestSenator = senator;
+            } else if (youngestSenator.birthDate < birthDate) {
+                youngestSenator = senator;
+            }
+
             const civiliteIndex = civilites.findIndex(x => x.label === senator.civilite);
             if (civiliteIndex > -1) {
                 civilites[civiliteIndex].count++;
@@ -94,6 +125,10 @@ const server = createServer(async (req, res) => {
         const endTableGroupes = "</table>";
         const tableGroupes = groupesTitle + beginTableGroupes + dataTableGroupes + endTableGroupes;
 
+        const youngestSenatorHtml = `<p>Le plus jeune, ${youngestSenator.nom} ${youngestSenator.prenom}, ${youngestSenator.age} ans, né ${youngestSenator.birthDate.toLocaleDateString('fr')}</p>`;
+        const oldestSenatorHtml = `<p>Le plus vieux, ${oldestSenator.nom} ${oldestSenator.prenom}, ${oldestSenator.age} ans, né ${oldestSenator.birthDate.toLocaleDateString('fr')}</p>`;
+        const ageHtml = `<h2>Ages</h2>${youngestSenatorHtml}${oldestSenatorHtml}`;
+
         const footer = `<footer class="mt-5 mb-3">
             <p><a href="https://data.senat.fr">Donnée officiel de l'open data du Sénat français</a></p>
             <p><a href="https://github.com/FreeCaribou/senaSTatistique-france">Code source</a></p>
@@ -104,7 +139,7 @@ const server = createServer(async (req, res) => {
         const htmlBuild = `<html lang="fr">
         ${head}<body>
         <div class="container">
-        ${title}${tableCivilites}${tableJobCategories}${tableGroupes}${footer}
+        ${title}${tableCivilites}${tableJobCategories}${tableGroupes}${ageHtml}${footer}
         </div>
         ${jsExtScript}
         </body></html>`;
