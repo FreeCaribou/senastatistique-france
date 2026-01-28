@@ -1,0 +1,20 @@
+{
+  "name": "senastatistique-france",
+  "version": "0.1.0",
+  "description": "Just some stat about the Senat in France",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FreeCaribou/senastatistique-france.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FreeCaribou/senastatistique-france/issues"
+  },
+  "homepage": "https://github.com/FreeCaribou/senastatistique-france#readme"
+}
