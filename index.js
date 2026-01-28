@@ -67,6 +67,7 @@ const server = createServer(async (req, res) => {
         groupes.sort((a, b) => b.count - a.count);
 
         // Build of the html
+        const head = "<head><title>SenaStatistique France</title></head>"
         const title = "<h1>Des stats sur le Sénat français et ses actuels sénateurs</h1>";
 
         const civilitesTitle = "<h2>Civilités:</h2>";
@@ -87,7 +88,12 @@ const server = createServer(async (req, res) => {
         const endTableGroupes = "</table>";
         const tableGroupes = groupesTitle + beginTableGroupes + dataTableGroupes + endTableGroupes;
 
-        const htmlBuild = title + tableCivilites + tableJobCategories + tableGroupes;
+        const footer = `<footer>
+            <a href="https://data.senat.fr">Data from official french senat open data</a>
+            <a href="https://github.com/FreeCaribou/senastatistique-france">Github project</a>
+        </footer>`;
+
+        const htmlBuild = `<html>${head} ${title} ${tableCivilites} ${tableJobCategories} ${tableGroupes} ${footer}</html>`;
 
         // res.end(JSON.stringify(actualSenator));
         res.end(htmlBuild);
