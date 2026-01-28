@@ -67,33 +67,47 @@ const server = createServer(async (req, res) => {
         groupes.sort((a, b) => b.count - a.count);
 
         // Build of the html
-        const head = "<head><title>SenaStatistique France</title></head>"
-        const title = "<h1>Des stats sur le Sénat français et ses actuels sénateurs</h1>";
+        const head = `<head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>SenaStatistique France</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        </head>`;
 
-        const civilitesTitle = "<h2>Civilités:</h2>";
-        const beginTableCivilites = "<table><tr><th>Civilité</th><th>Nombre</th></tr>";
+        const title = "<h1 class='mb-5'>Des stats sur le Sénat français et ses actuels sénateurs</h1>";
+
+        const civilitesTitle = "<h2>Civilités</h2>";
+        const beginTableCivilites = "<table class='table mb-3'><thead class='table-light'><tr><th>Civilité</th><th>Nombre</th></tr></thead>";
         const dataTableCivilites = civilites.map(c => `<tr><td>${c.label}</td><td>${c.count}</td></tr>`).join('');
         const endTableCivilites = "</table>";
         const tableCivilites = civilitesTitle + beginTableCivilites + dataTableCivilites + endTableCivilites;
 
-        const jobCategoriesTitle = "<h2>Catégories professionnelles:</h2>";
-        const beginTableJobCategories = "<table><tr><th>Libellé</th><th>Nombre</th></tr>";
+        const jobCategoriesTitle = "<h2>Catégories professionnelles</h2>";
+        const beginTableJobCategories = "<table class='table mb-3'><thead class='table-light'><tr><th>Libellé</th><th>Nombre</th></tr></thead>";
         const dataTableJobCategories = jobCategories.map(c => `<tr><td>${c.label}</td><td>${c.count}</td></tr>`).join('');
         const endTableJobCategories = "</table>";
         const tableJobCategories = jobCategoriesTitle + beginTableJobCategories + dataTableJobCategories + endTableJobCategories;
 
-        const groupesTitle = "<h2>Groupes politiques:</h2>";
-        const beginTableGroupes = "<table><tr><th>Libellé</th><th>Nombre</th></tr>";
+        const groupesTitle = "<h2>Groupes politiques</h2>";
+        const beginTableGroupes = "<table class='table mb-3'><thead class='table-light'><tr><th>Libellé</th><th>Nombre</th></tr></thead>";
         const dataTableGroupes = groupes.map(c => `<tr><td>${c.label}</td><td>${c.count}</td></tr>`).join('');
         const endTableGroupes = "</table>";
         const tableGroupes = groupesTitle + beginTableGroupes + dataTableGroupes + endTableGroupes;
 
-        const footer = `<footer>
-            <a href="https://data.senat.fr">Data from official french senat open data</a>
-            <a href="https://github.com/FreeCaribou/senastatistique-france">Github project</a>
+        const footer = `<footer class="mt-5 mb-3">
+            <p><a href="https://data.senat.fr">Donnée officiel de l'open data du Sénat français</a></p>
+            <p><a href="https://github.com/FreeCaribou/senastatistique-france">Code source</a></p>
         </footer>`;
 
-        const htmlBuild = `<html>${head} ${title} ${tableCivilites} ${tableJobCategories} ${tableGroupes} ${footer}</html>`;
+        const jsExtScript = `<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>`;
+
+        const htmlBuild = `<html lang="fr">
+        ${head}<body>
+        <div class="container">
+        ${title}${tableCivilites}${tableJobCategories}${tableGroupes}${footer}
+        </div>
+        ${jsExtScript}
+        </body></html>`;
 
         // res.end(JSON.stringify(actualSenator));
         res.end(htmlBuild);
