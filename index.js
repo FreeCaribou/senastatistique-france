@@ -130,8 +130,9 @@ const server = createServer(async (req, res) => {
 
         const youngestSenatorHtml = `<p>Le plus jeune, ${youngestSenator.nom} ${youngestSenator.prenom}, ${youngestSenator.age} ans, né ${youngestSenator.birthDate.toLocaleDateString('fr')}</p>`;
         const oldestSenatorHtml = `<p>Le plus vieux, ${oldestSenator.nom} ${oldestSenator.prenom}, ${oldestSenator.age} ans, né ${oldestSenator.birthDate.toLocaleDateString('fr')}</p>`;
-        const middleAge = `<p>La moyenne d'age est de ${Math.floor(oldAges.reduce((acc, val) => acc + val, 0) / oldAges.length)} ans</p>`;
-        const ageHtml = `<h2>Ages</h2>${youngestSenatorHtml}${oldestSenatorHtml}${middleAge}`;
+        const middleAgeHtml = `<p>La moyenne d'age est de ${Math.floor(oldAges.reduce((acc, val) => acc + val, 0) / oldAges.length)} ans</p>`;
+        const olderThanPensionHtml = `<p>${oldAges.filter(x => x >= 65).length} senateurs et sénatrices sont au dessous de l'age de la retraire de 65 ans (sur ${oldAges.length} sénateur ou sénatrices)</p>`;
+        const ageHtml = `<h2>Ages</h2>${youngestSenatorHtml}${oldestSenatorHtml}${middleAgeHtml}${olderThanPensionHtml}`;
 
         const footer = `<footer class="mt-5 mb-3">
             <p><a href="https://data.senat.fr">Donnée officiel de l'open data du Sénat français</a></p>
