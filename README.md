@@ -10,6 +10,7 @@ Using https://data.senat.fr/les-senateurs/
 
 - Check the age of senator
 - Better html and graph
+- refactor
 - Throw error if no data from the senat open data
 - Make some link with the senat public page
 - Make real app ? With more stat with the french public data ?

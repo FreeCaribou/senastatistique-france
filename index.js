@@ -39,6 +39,7 @@ const server = createServer(async (req, res) => {
 
         let oldestSenator;
         let youngestSenator;
+        const oldAges = [];
 
         actualSenators.forEach(senator => {
             const senatorOtherDetail = allSenators.find(x => x.Matricule === senator.matricule);
@@ -52,6 +53,7 @@ const server = createServer(async (req, res) => {
             }
             senator.birthDate = birthDate;
             senator.age = age;
+            oldAges.push(age);
             if (!oldestSenator) {
                 oldestSenator = senator;
             } else if (oldestSenator.birthDate > birthDate) {
@@ -97,6 +99,7 @@ const server = createServer(async (req, res) => {
         jobCategories.sort((a, b) => b.count - a.count);
         groupes.sort((a, b) => b.count - a.count);
 
+
         // Build of the html
         const head = `<head>
         <meta charset="utf-8">
@@ -127,7 +130,8 @@ const server = createServer(async (req, res) => {
 
         const youngestSenatorHtml = `<p>Le plus jeune, ${youngestSenator.nom} ${youngestSenator.prenom}, ${youngestSenator.age} ans, né ${youngestSenator.birthDate.toLocaleDateString('fr')}</p>`;
         const oldestSenatorHtml = `<p>Le plus vieux, ${oldestSenator.nom} ${oldestSenator.prenom}, ${oldestSenator.age} ans, né ${oldestSenator.birthDate.toLocaleDateString('fr')}</p>`;
-        const ageHtml = `<h2>Ages</h2>${youngestSenatorHtml}${oldestSenatorHtml}`;
+        const middleAge = `<p>La moyenne d'age est de ${Math.floor(oldAges.reduce((acc, val) => acc + val, 0) / oldAges.length)} ans</p>`;
+        const ageHtml = `<h2>Ages</h2>${youngestSenatorHtml}${oldestSenatorHtml}${middleAge}`;
 
         const footer = `<footer class="mt-5 mb-3">
             <p><a href="https://data.senat.fr">Donnée officiel de l'open data du Sénat français</a></p>
